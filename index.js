@@ -1,61 +1,23 @@
-import http from 'http';
-import fs from 'fs';
+const express = require('express');
+const app = express();
 
-const server = http.createServer((req, res) => {
-  // console.log(req);
-  console.log(req.url);
-
-  // set header content type
-  res.setHeader('Content-Type', 'text/html');
-
-  // res.write('<p>hello, ninjas</p>');
-  // res.write('<p>hello again, ninjas</p>');
-  // res.end();
-
-  // send html file
-  // fs.readFile('./views/index.html', (err, data) => {
-  //   if (err) {
-  //     console.log(err);
-  //     res.end();
-  //   }
-  //   //res.write(data);
-  //   res.end(data);
-  // });
-
-  // routing
-  let path = './';
-  switch(req.url) {
-    case '/':
-      path += 'index.html';
-      res.statusCode = 200;
-      break;
-    case '/about':
-      path += 'about.html';
-      res.statusCode = 200;
-      break;
-    case '/contact-me':
-        path += 'contact-me.html';
-        res.statusCode = 200;
-        break;
-    default:
-      path += '404.html';
-      res.statusCode = 404;
-  }
-
-  // send html
-  fs.readFile(path, (err, data) => {
-    if (err) {
-      console.log(err);
-      res.end();
-    }
-    //res.write(data);
-    res.end(data);
-  });
-
-
+app.get('/', (req, res) => {
+    res.sendFile('./index.html', { root: __dirname });
 });
 
-// localhost is the default value for 2nd argument
-server.listen(3000, 'localhost', () => {
-  console.log('listening for requests on port 3000');
+app.get('/about', (req, res) => {
+    res.sendFile('./about.html', { root: __dirname });
 });
+app.get('/contact-me', (req, res) => {
+    res.sendFile('./contact-me.html', { root: __dirname });
+})
+
+
+// 404 page
+app.use((req, res) => {
+    res.status(404).sendFile('./404.html', { root: __dirname });
+});
+
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => console.log(`Example app listening on port ${PORT}!`));
